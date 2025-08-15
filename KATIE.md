@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Django web application named "hello_world" - a simple starter project set up for GitHub Codespaces development. The project uses Django 5.2.2 with SQLite as the database and includes browser reload functionality for development.
+This is a Django web application named "lms_platform" - a simple starter project set up for GitHub Codespaces development. The project uses Django 5.2.2 with SQLite as the database and includes browser reload functionality for development.
 
 ## Development Commands
 
@@ -45,7 +45,7 @@ python manage.py test
 ## Architecture
 
 ### Project Structure
-- `hello_world/` - Main Django project directory
+- `lms_platform/` - Main Django project directory
   - `settings.py` - Django configuration with Codespaces-specific setup
   - `urls.py` - Main URL routing
   - `core/views.py` - Core application views
@@ -58,8 +58,8 @@ python manage.py test
 - Uses `python-decouple` for environment variable management
 - Configured for GitHub Codespaces with automatic CSRF trusted origins
 - Includes `django-browser-reload` for live reloading during development
-- Static files served from `hello_world/static/` in development
-- Templates located in `hello_world/templates/`
+- Static files served from `lms_platform/static/` in development
+- Templates located in `lms_platform/templates/`
 
 ### Environment Variables
 The application uses environment variables via `python-decouple`:
