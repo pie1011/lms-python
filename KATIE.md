@@ -255,3 +255,38 @@ The application uses environment variables via `python-decouple`:
 - **Database:** PostgreSQL in production, SQLite in development
 - **Static Files:** Managed by whitenoise
 - **Process:** Auto-deploy from GitHub main branch
+
+## Random notes for myself:
+
+Original devcontainer.json file (keeps "waitFor": "onCreateCommand", which was causing infinate loading)
+{
+  "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "hostRequirements": {
+    "cpus": 4
+  },
+  "waitFor": "onCreateCommand",
+  "updateContentCommand": "pip install -r requirements.txt && python manage.py migrate",
+  "postCreateCommand": "cp .env.example .env",
+  "postAttachCommand": {
+    "server": "python manage.py runserver"
+  },
+  "customizations": {
+    "codespaces": {
+      "openFiles": [
+        "lms_platform/templates/index.html"
+      ]
+    },
+    "vscode": {
+      "extensions": [
+        "ms-python.python"
+      ]
+    }
+  },
+  "portsAttributes": {
+    "8000": {
+      "label": "Application",
+      "onAutoForward": "openPreview"
+    }
+  },
+  "forwardPorts": [8000]
+}
