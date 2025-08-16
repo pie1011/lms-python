@@ -22,7 +22,7 @@ from django.conf.urls.static import static
 from lms_platform.core import views as core_views
 
 urlpatterns = [
-    path("", core_views.index),
+    path("", core_views.index, name='index'), 
     path("admin/", admin.site.urls),
 ]
 

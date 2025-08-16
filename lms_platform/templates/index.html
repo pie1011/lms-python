@@ -1,32 +1,194 @@
 {% load static %}
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="GitHub Codespaces ♥️ Django">
-    <meta name="author" content="GitHub Codespaces">
-    <meta name="generator" content="GitHub Codespaces">
-    <meta name="theme-color" content="#000000">
-    <title>{% block title %}{{ title }} | GitHub Codespaces ♥️ Django{% endblock %}</title>
-    
-    <link rel="stylesheet" href="{% static 'main.css' %}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LMS Platform - Modern Learning Management System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/modern-lms.css' %}">
 </head>
-
 <body>
-    <div class="App">
-        <header class="App-header">
-            <img src="{% static 'Octocat.png' %}" class="App-logo" alt="logo" />
-            <p>
-                GitHub Codespaces <span class="heart">♥️</span> Django
-            </p>
-            <p class="small">
-                Edit <code>lms_platform/templates/index.html</code> and see changes live!
-            </p>
-        </header>
-    </div>
-</body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav-container">
+            <a href="{% url 'index' %}" class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                LMS Platform
+            </a>
+            <ul class="nav-menu">
+                <li><a href="#features" class="nav-link">Features</a></li>
+                <li><a href="#courses" class="nav-link">Courses</a></li>
+                <li><a href="#about" class="nav-link">About</a></li>
+                <li><a href="{% url 'admin:index' %}" class="nav-link">Admin</a></li>
+            </ul>
+            <div class="nav-cta">
+                <a href="{% url 'admin:login' %}" class="btn btn-outline">Log In</a>
+                <a href="{% url 'admin:index' %}" class="btn btn-primary">
+                    Get Started
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </nav>
+    </header>
 
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-content loading">
+                <h1>Transform Learning with Modern Education Technology</h1>
+                <p>Empower educators and inspire students with our intuitive Learning Management System. Create engaging courses, track progress, and build meaningful educational experiences.</p>
+                
+                <div class="hero-cta">
+                    <a href="{% url 'admin:index' %}" class="btn btn-primary">
+                        Explore Platform
+                        <i class="fas fa-rocket"></i>
+                    </a>
+                    <a href="#features" class="btn btn-outline">
+                        Learn More
+                        <i class="fas fa-play"></i>
+                    </a>
+                </div>
+
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-number">5+</span>
+                        <span class="stat-label">Course Models</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">3</span>
+                        <span class="stat-label">User Roles</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">100%</span>
+                        <span class="stat-label">Open Source</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-visual loading">
+                <div class="hero-card">
+                    <div class="course-preview">
+                        <h3 class="course-title">MATH101 - Introduction to Mathematics</h3>
+                        <div class="course-progress">
+                            <div class="progress-bar"></div>
+                        </div>
+                        <div class="course-meta">
+                            <span>Module: Addition</span>
+                            <span>Assignment Ready</span>
+                        </div>
+                    </div>
+                    
+                    <div class="course-preview">
+                        <h3 class="course-title">Django LMS Development</h3>
+                        <div class="course-progress">
+                            <div class="progress-bar" style="width: 90%;"></div>
+                        </div>
+                        <div class="course-meta">
+                            <span>Progress: 90%</span>
+                            <span>Database Complete</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="features-container">
+            <div class="section-header">
+                <h2>Everything You Need for Modern Learning</h2>
+                <p>Our comprehensive platform provides all the tools educators and students need to succeed in today's digital learning environment.</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card loading">
+                    <div class="feature-icon blue">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Multi-Role Management</h3>
+                    <p>Seamlessly manage administrators, instructors, and students with role-based permissions and intuitive dashboards tailored to each user type.</p>
+                </div>
+
+                <div class="feature-card loading">
+                    <div class="feature-icon green">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Progress Tracking</h3>
+                    <p>Monitor student progress with detailed analytics, grade tracking, and visual progress indicators that help identify areas for improvement.</p>
+                </div>
+
+                <div class="feature-card loading">
+                    <div class="feature-icon orange">
+                        <i class="fas fa-file-upload"></i>
+                    </div>
+                    <h3>Assignment Management</h3>
+                    <p>Create, distribute, and grade assignments with ease. Support for file uploads, due date tracking, and automated grade calculations.</p>
+                </div>
+
+                <div class="feature-card loading">
+                    <div class="feature-icon purple">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h3>Smart Scheduling</h3>
+                    <p>Integrated calendar system with automated notifications for assignments, deadlines, and important course announcements.</p>
+                </div>
+
+                <div class="feature-card loading">
+                    <div class="feature-icon blue">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Mobile Responsive</h3>
+                    <p>Access your courses anywhere, anytime. Our platform works seamlessly across all devices with a mobile-first design approach.</p>
+                </div>
+
+                <div class="feature-card loading">
+                    <div class="feature-icon green">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Secure & Reliable</h3>
+                    <p>Enterprise-grade security with data encryption, regular backups, and professional deployment practices to keep your learning environment safe.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="cta-container">
+            <h2>Ready to Transform Your Learning Experience?</h2>
+            <p>Explore our fully functional Learning Management System with comprehensive course management, student enrollment, and assignment tracking. Start exploring today!</p>
+            <a href="{% url 'admin:index' %}" class="btn btn-white">
+                Access Admin Portal
+                <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-logo">
+                <i class="fas fa-graduation-cap"></i>
+                LMS Platform
+            </div>
+            
+            <div class="footer-links">
+                <a href="#features">Features</a>
+                <a href="{% url 'admin:index' %}">Admin</a>
+                <a href="#about">About</a>
+                <a href="https://github.com/pie1011/lms-python">GitHub</a>
+                <a href="#contact">Contact</a>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2025 LMS Platform - Portfolio Project by Katie Harshman. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/modern-lms.js' %}"></script>
+</body>
 </html>
