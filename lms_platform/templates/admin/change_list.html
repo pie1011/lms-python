@@ -1,7 +1,54 @@
 {% extends "admin/base.html" %}
-{% load static %}
+{% load admin_urls static admin_list %}
 
 {% block content %}
+
+<div class="list-header">
+    <h1 class="list-title">{{ title }}</h1>
+    
+    <div class="list-actions">
+        {% if has_add_permission %}
+            <a href="{% url 'admin:'|add:cl.opts.app_label|add:'_'|add:cl.opts.model_name|add:'_add' %}" class="add-button">
+                <i class="fas fa-plus"></i>
+                Add {{ opts.verbose_name }}
+            </a>
+        {% endif %}
+    </div>
+</div>
+
+{% block search %}{{ block.super }}{% endblock %}
+
+{% block date_hierarchy %}{{ block.super }}{% endblock %}
+
+{% block filters %}{{ block.super }}{% endblock %}
+
+{% if action_form and actions_on_top and cl.show_admin_actions %}
+    {% admin_actions %}
+{% endif %}
+
+{% block result_list %}
+    {% if cl.result_count == 0 %}
+        <div style="text-align: center; padding: 3rem; color: var(--neutral-gray);">
+            <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 1rem; color: var(--neutral-gray);"></i>
+            <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--neutral-dark);">No {{ opts.verbose_name_plural }} found</h3>
+            <p>{% if cl.query %}No results for "{{ cl.query }}"{% else %}No {{ opts.verbose_name_plural }} have been created yet.{% endif %}</p>
+            {% if has_add_permission %}
+                <a href="{% url 'admin:'|add:cl.opts.app_label|add:'_'|add:cl.opts.model_name|add:'_add' %}" class="add-button" style="margin-top: 1rem; display: inline-flex;">
+                    <i class="fas fa-plus"></i>
+                    Add the first {{ opts.verbose_name }}
+                </a>
+            {% endif %}
+        </div>
+    {% else %}
+        {{ block.super }}
+    {% endif %}
+{% endblock %}
+
+{% if action_form and actions_on_bottom and cl.show_admin_actions %}
+    {% admin_actions %}
+{% endif %}
+
+{% endblock %}
 <style>
     .list-header {
         display: flex;
@@ -440,4 +487,3 @@
         }
     });
 </script>
-{% endblock %}
