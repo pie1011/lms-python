@@ -40,30 +40,23 @@ if 'CODESPACE_NAME' in os.environ:
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
-    "django.contrib.contenttypes",
+    "django.contrib.contenttypes", 
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    'lms_platform.core',  # core application
+    "lms_platform.core",
 ]
-# Only add browser reload in DEBUG mode
-if DEBUG:
-    INSTALLED_APPS.append("django_browser_reload")
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",  # Add WhiteNoise middleware for static files
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware", 
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
-
-# Only add browser reload middleware in DEBUG mode
-if DEBUG:
-    MIDDLEWARE.append("django_browser_reload.middleware.BrowserReloadMiddleware")
 
 X_FRAME_OPTIONS = "ALLOW-FROM preview.app.github.dev"
 
