@@ -235,3 +235,12 @@ The application uses environment variables via `python-decouple`:
 - **Database:** PostgreSQL in production, SQLite in development
 - **Static Files:** Managed by whitenoise
 - **Process:** Auto-deploy from GitHub main branch
+
+
+Original
+pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate
+
+New for populating
+pip install -r requirements.txt && python manage.py
+  collectstatic --noinput && python manage.py migrate &&
+  python manage.py setup_production
