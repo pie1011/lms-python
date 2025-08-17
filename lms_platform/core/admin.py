@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.models import User
 from .models import UserProfile, Course, Module, Assignment, Enrollment, Submission
+from django import forms
 
 class CourseAdmin(admin.ModelAdmin):
     """ Custom admin for Course model to filter instructors """
@@ -32,10 +33,45 @@ class SubmissionAdmin(admin.ModelAdmin):
             kwargs["queryset"] = User.objects.filter(id__in=student_users)
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
+
+class AssignmentAdminForm(forms.ModelForm):
+    """ Custom form for Assignment model to handle specific field types and validation.
+    This form allows for better control over how the fields are displayed in the admin interface.
+    """
+    class Meta:
+        model = Assignment
+        fields = '__all__'
+        widgets = {
+            'due_date': forms.DateTimeInput(
+                attrs={
+                    'type': 'datetime-local',
+                    'class': 'form-control'
+                }
+            ),
+            'description': forms.Textarea(
+                attrs={
+                    'rows': 4,
+                    'placeholder': 'Enter assignment description...'
+                }
+            ),
+            'instructions': forms.Textarea(
+                attrs={
+                    'rows': 6,
+                    'placeholder': 'Enter detailed instructions for students...'
+                }
+            ),
+        }
+
+class AssignmentAdmin(admin.ModelAdmin):
+    form = AssignmentAdminForm
+    list_display = ['assignment_name', 'module', 'due_date', 'max_points', 'assignment_type']
+    list_filter = ['assignment_type', 'due_date', 'module__course']
+    search_fields = ['assignment_name', 'description']
+    
 # Register your models here.
 admin.site.register(UserProfile)
 admin.site.register(Course, CourseAdmin)
 admin.site.register(Module)
-admin.site.register(Assignment)
+admin.site.register(Assignment, AssignmentAdmin)
 admin.site.register(Enrollment, EnrollmentAdmin)  # Use custom admin
 admin.site.register(Submission, SubmissionAdmin)  # Use custom admin

@@ -1,6 +1,6 @@
 # KATIE.md
 
-This file provides guidance to Claude and Claude Code when working with code in this repository.
+This file provides guidance to when working with code in this repository.
 
 ## Project Overview
 
