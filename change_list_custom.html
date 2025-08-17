@@ -1,0 +1,489 @@
+{% extends "admin/base.html" %}
+{% load admin_urls static admin_list %}
+
+{% block content %}
+
+<div class="list-header">
+    <h1 class="list-title">{{ title }}</h1>
+    
+    <div class="list-actions">
+        {% if has_add_permission %}
+            <a href="{% url 'admin:'|add:cl.opts.app_label|add:'_'|add:cl.opts.model_name|add:'_add' %}" class="add-button">
+                <i class="fas fa-plus"></i>
+                Add {{ opts.verbose_name }}
+            </a>
+        {% endif %}
+    </div>
+</div>
+
+{% block search %}{{ block.super }}{% endblock %}
+
+{% block date_hierarchy %}{{ block.super }}{% endblock %}
+
+{% block filters %}{{ block.super }}{% endblock %}
+
+{% if action_form and actions_on_top and cl.show_admin_actions %}
+    {% admin_actions %}
+{% endif %}
+
+{% block result_list %}
+    {% if cl.result_count == 0 %}
+        <div style="text-align: center; padding: 3rem; color: var(--neutral-gray);">
+            <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 1rem; color: var(--neutral-gray);"></i>
+            <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--neutral-dark);">No {{ opts.verbose_name_plural }} found</h3>
+            <p>{% if cl.query %}No results for "{{ cl.query }}"{% else %}No {{ opts.verbose_name_plural }} have been created yet.{% endif %}</p>
+            {% if has_add_permission %}
+                <a href="{% url 'admin:'|add:cl.opts.app_label|add:'_'|add:cl.opts.model_name|add:'_add' %}" class="add-button" style="margin-top: 1rem; display: inline-flex;">
+                    <i class="fas fa-plus"></i>
+                    Add the first {{ opts.verbose_name }}
+                </a>
+            {% endif %}
+        </div>
+    {% else %}
+        {{ block.super }}
+    {% endif %}
+{% endblock %}
+
+{% if action_form and actions_on_bottom and cl.show_admin_actions %}
+    {% admin_actions %}
+{% endif %}
+
+{% endblock %}
+<style>
+    .list-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid rgba(37, 99, 235, 0.1);
+    }
+
+    .list-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--neutral-dark);
+        margin: 0;
+    }
+
+    .list-actions {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .add-button {
+        background: var(--gradient-primary);
+        color: var(--white);
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .add-button:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+        color: var(--white);
+    }
+
+    .search-form {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+
+    .search-input {
+        padding: 0.5rem 1rem;
+        border: 1px solid rgba(37, 99, 235, 0.2);
+        border-radius: 6px;
+        font-size: 0.9rem;
+        min-width: 200px;
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: var(--primary-blue);
+        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+    }
+
+    .search-button {
+        background: var(--primary-blue);
+        color: var(--white);
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.9rem;
+    }
+
+    .results-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--white);
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid rgba(37, 99, 235, 0.1);
+        margin-top: 1rem;
+    }
+
+    .results-table th {
+        background: linear-gradient(135deg, var(--primary-blue-light), var(--primary-blue));
+        color: var(--white);
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .results-table td {
+        padding: 1rem;
+        border-bottom: 1px solid rgba(37, 99, 235, 0.1);
+        transition: background 0.3s ease;
+    }
+
+    .results-table tr:hover td {
+        background: rgba(37, 99, 235, 0.05);
+    }
+
+    .results-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .table-link {
+        color: var(--primary-blue);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s ease;
+    }
+
+    .table-link:hover {
+        color: var(--primary-blue-dark);
+        text-decoration: underline;
+    }
+
+    .action-checkbox {
+        width: 16px;
+        height: 16px;
+        accent-color: var(--primary-blue);
+    }
+
+    .bulk-actions {
+        background: var(--neutral-light);
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        font-size: 0.9rem;
+    }
+
+    .bulk-actions select {
+        padding: 0.5rem;
+        border: 1px solid rgba(37, 99, 235, 0.2);
+        border-radius: 6px;
+        background: var(--white);
+    }
+
+    .bulk-actions button {
+        background: var(--accent-orange);
+        color: var(--white);
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 500;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 2rem;
+        align-items: center;
+    }
+
+    .pagination a, .pagination span {
+        padding: 0.5rem 1rem;
+        border: 1px solid rgba(37, 99, 235, 0.2);
+        border-radius: 6px;
+        text-decoration: none;
+        color: var(--neutral-dark);
+        transition: all 0.3s ease;
+    }
+
+    .pagination a:hover {
+        background: var(--primary-blue);
+        color: var(--white);
+        border-color: var(--primary-blue);
+    }
+
+    .pagination .this-page {
+        background: var(--primary-blue);
+        color: var(--white);
+        border-color: var(--primary-blue);
+    }
+
+    .pagination-info {
+        color: var(--neutral-gray);
+        font-size: 0.9rem;
+        margin-right: 1rem;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: var(--neutral-gray);
+    }
+
+    .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        color: var(--neutral-gray);
+    }
+
+    .empty-state h3 {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+        color: var(--neutral-dark);
+    }
+
+    .filters {
+        background: var(--neutral-light);
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+    }
+
+    .filter-title {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--neutral-dark);
+    }
+
+    .filter-links {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .filter-links a {
+        color: var(--primary-blue);
+        text-decoration: none;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        transition: background 0.3s ease;
+    }
+
+    .filter-links a:hover {
+        background: rgba(37, 99, 235, 0.1);
+    }
+
+    .filter-links a.selected {
+        background: var(--primary-blue);
+        color: var(--white);
+    }
+
+    @media (max-width: 768px) {
+        .list-header {
+            flex-direction: column;
+            gap: 1rem;
+            align-items: stretch;
+        }
+
+        .list-actions {
+            flex-direction: column;
+        }
+
+        .results-table {
+            font-size: 0.8rem;
+        }
+
+        .results-table th,
+        .results-table td {
+            padding: 0.5rem;
+        }
+    }
+</style>
+
+<div class="list-header">
+    <h1 class="list-title">
+        {% if opts.verbose_name_plural %}
+            {{ opts.verbose_name_plural|capfirst }}
+        {% else %}
+            {{ cl.opts.verbose_name_plural|capfirst }}
+        {% endif %}
+    </h1>
+    
+    <div class="list-actions">
+        {% if has_add_permission %}
+            <a href="{% url 'admin:'|add:cl.opts.app_label|add:'_'|add:cl.opts.model_name|add:'_add' %}" class="add-button">
+                <i class="fas fa-plus"></i>
+                Add {{ cl.opts.verbose_name }}
+            </a>
+        {% endif %}
+        
+        {% if cl.search_fields %}
+            <form method="get" class="search-form">
+                <input type="text" name="q" value="{{ cl.query }}" placeholder="Search..." class="search-input">
+                <button type="submit" class="search-button">
+                    <i class="fas fa-search"></i>
+                </button>
+                {% for key, value in cl.params.items %}
+                    {% if key != 'q' %}
+                        <input type="hidden" name="{{ key }}" value="{{ value }}">
+                    {% endif %}
+                {% endfor %}
+            </form>
+        {% endif %}
+    </div>
+</div>
+
+{% if cl.formset.errors %}
+    <div class="message error">
+        <i class="fas fa-exclamation-triangle"></i>
+        Please correct the errors below.
+    </div>
+{% endif %}
+
+{% if action_form and actions_on_top and cl.show_admin_actions %}
+    <form method="post" class="bulk-actions">
+        {% csrf_token %}
+        <label>Action:</label>
+        {{ action_form.action }}
+        <button type="submit" name="index" value="{{ action_index }}">Go</button>
+        <span class="action-counter" data-actions-icnt="{{ cl.result_count }}">0 of {{ cl.result_count }} selected</span>
+    </form>
+{% endif %}
+
+{% if cl.filter_specs %}
+    <div class="filters">
+        <div class="filter-title">Filter by:</div>
+        <div class="filter-links">
+            {% for spec in cl.filter_specs %}
+                {% for choice in spec.choices %}
+                    <a href="{{ choice.query_string|iriencode }}" 
+                       class="{% if choice.selected %}selected{% endif %}">
+                        {{ choice.display }}
+                    </a>
+                {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}
+
+{% if cl.result_count == 0 %}
+    <div class="empty-state">
+        <i class="fas fa-inbox"></i>
+        <h3>No {{ cl.opts.verbose_name_plural }} found</h3>
+        <p>{% if cl.query %}No results for "{{ cl.query }}"{% else %}No {{ cl.opts.verbose_name_plural }} have been created yet.{% endif %}</p>
+        {% if has_add_permission %}
+            <a href="{% url 'admin:'|add:cl.opts.app_label|add:'_'|add:cl.opts.model_name|add:'_add' %}" class="add-button" style="margin-top: 1rem; display: inline-flex;">
+                <i class="fas fa-plus"></i>
+                Add the first {{ cl.opts.verbose_name }}
+            </a>
+        {% endif %}
+    </div>
+{% else %}
+    <table class="results-table">
+        <thead>
+            <tr>
+                {% if action_form and cl.show_admin_actions %}
+                    <th>
+                        <input type="checkbox" id="action-toggle" class="action-checkbox">
+                    </th>
+                {% endif %}
+                {% for header in result_headers %}
+                    <th class="{{ header.class_attrib }}">
+                        {% if header.sortable %}
+                            <a href="{{ header.url_primary }}">{{ header.text|capfirst }}</a>
+                        {% else %}
+                            {{ header.text|capfirst }}
+                        {% endif %}
+                    </th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for result in results %}
+                <tr>
+                    {% if action_form and cl.show_admin_actions %}
+                        <td>
+                            <input type="checkbox" name="_selected_action" value="{{ result.pk }}" class="action-checkbox action-select">
+                        </td>
+                    {% endif %}
+                    {% for item in result %}
+                        <td>
+                            {% if forloop.first %}
+                                <a href="{% url 'admin:'|add:cl.opts.app_label|add:'_'|add:cl.opts.model_name|add:'_change' result.pk %}" class="table-link">
+                                    {{ item }}
+                                </a>
+                            {% else %}
+                                {{ item }}
+                            {% endif %}
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if cl.result_count > cl.list_per_page %}
+        <div class="pagination">
+            <span class="pagination-info">
+                {{ cl.result_count }} total
+            </span>
+            
+            {% if cl.can_show_all %}
+                <a href="?{% if cl.is_popup %}_popup=1&{% endif %}{{ cl.get_query_string|slice:"1:" }}">All</a>
+            {% endif %}
+            
+            {% for i in cl.page_range %}
+                {% if cl.page_num == i %}
+                    <span class="this-page">{{ i }}</span>
+                {% else %}
+                    <a href="?{% if cl.is_popup %}_popup=1&{% endif %}{{ cl.get_query_string }}&p={{ i }}">{{ i }}</a>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endif %}
+
+<script>
+    // Action checkbox functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggleCheckbox = document.getElementById('action-toggle');
+        const actionCheckboxes = document.querySelectorAll('.action-select');
+        const actionCounter = document.querySelector('.action-counter');
+        
+        if (toggleCheckbox) {
+            toggleCheckbox.addEventListener('change', function() {
+                actionCheckboxes.forEach(checkbox => {
+                    checkbox.checked = this.checked;
+                });
+                updateCounter();
+            });
+        }
+        
+        actionCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateCounter);
+        });
+        
+        function updateCounter() {
+            const checkedCount = document.querySelectorAll('.action-select:checked').length;
+            if (actionCounter) {
+                const totalCount = actionCounter.dataset.actionsIcnt;
+                actionCounter.textContent = `${checkedCount} of ${totalCount} selected`;
+            }
+        }
+    });
+</script>

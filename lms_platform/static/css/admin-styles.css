@@ -548,3 +548,166 @@ input[type="submit"] {
         padding: 0.5rem !important;
     }
 }
+
+
+/* Additional Change List Styles - Add these to the bottom of admin-styles.css */
+
+.search-form {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.search-input {
+    padding: 0.5rem 1rem;
+    border: 1px solid rgba(37, 99, 235, 0.2);
+    border-radius: 6px;
+    font-size: 0.9rem;
+    min-width: 200px;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+}
+
+.search-button {
+    background: var(--primary-blue);
+    color: var(--white);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.results-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--white);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(37, 99, 235, 0.1);
+    margin-top: 1rem;
+}
+
+.results-table th {
+    background: linear-gradient(135deg, var(--primary-blue-light), var(--primary-blue));
+    color: var(--white);
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.results-table td {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(37, 99, 235, 0.1);
+    transition: background 0.3s ease;
+}
+
+.results-table tr:hover td {
+    background: rgba(37, 99, 235, 0.05);
+}
+
+.results-table tr:last-child td {
+    border-bottom: none;
+}
+
+.table-link {
+    color: var(--primary-blue);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.table-link:hover {
+    color: var(--primary-blue-dark);
+    text-decoration: underline;
+}
+
+.bulk-actions {
+    background: var(--neutral-light);
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.9rem;
+}
+
+.bulk-actions select {
+    padding: 0.5rem;
+    border: 1px solid rgba(37, 99, 235, 0.2);
+    border-radius: 6px;
+    background: var(--white);
+}
+
+.bulk-actions button {
+    background: var(--accent-orange);
+    color: var(--white);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: var(--neutral-gray);
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: var(--neutral-gray);
+}
+
+.empty-state h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--neutral-dark);
+}
+
+.filters {
+    background: var(--neutral-light);
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.filter-title {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--neutral-dark);
+}
+
+.filter-links {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.filter-links a {
+    color: var(--primary-blue);
+    text-decoration: none;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    transition: background 0.3s ease;
+}
+
+.filter-links a:hover {
+    background: rgba(37, 99, 235, 0.1);
+}
+
+.filter-links a.selected {
+    background: var(--primary-blue);
+    color: var(--white);
+}
