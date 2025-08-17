@@ -5,6 +5,8 @@ from datetime import timedelta
 from .models import UserProfile, Course, Module, Assignment, Enrollment, Submission
 from django import forms
 
+# Import the UserAdmin from Django's auth module to customize the User model admin
+from django.contrib.auth.admin import UserAdmin
 
 class LMSAdminSite(admin.AdminSite):
     """
@@ -139,3 +141,7 @@ admin_site.register(Module)
 admin_site.register(Assignment, AssignmentAdmin)
 admin_site.register(Enrollment, EnrollmentAdmin)
 admin_site.register(Submission, SubmissionAdmin)
+
+# Register Django's built-in User model with our custom admin
+admin_site.register(User, UserAdmin)
+

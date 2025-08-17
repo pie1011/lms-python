@@ -14,26 +14,35 @@ This LMS Platform is a portfolio project showcasing professional Django developm
 - **User Management**: Role-based authentication (Student, Instructor, Admin)
 - **Academic Structure**: Courses → Modules → Assignments hierarchy
 - **Enrollment System**: Student-course relationships with grade tracking
-- **Assignment Management**: Creation, submission, and grading workflow
-- **Admin Interface**: Customized Django admin with role-based filtering
+- **Assignment Management**: Creation, submission, and grading workflow with date/time pickers
+- **Modern Admin Interface**: Custom-styled admin dashboard with real-time data
+- **Responsive Design**: Mobile-friendly admin interface with consistent styling
 - **Production Deployment**: Live on Render with PostgreSQL database
 - **Automated Setup**: Django management commands for production data
 
-### 🚧 Planned Features
-- Frontend student/instructor portals
-- File upload system for assignments
-- Grade calculation and GPA tracking
-- Email notifications
-- Calendar integration
-- Responsive design
+### 🎨 Design & User Experience
+- **Beautiful Dashboard**: Real-time statistics and quick actions
+- **Styled List Views**: Professional tables with search, filtering, and pagination
+- **Modern Forms**: Clean form styling with proper date/time inputs
+- **Template Inheritance**: Organized, maintainable template structure
+- **CSS Architecture**: External stylesheets with design system consistency
+- **User-Friendly Navigation**: Intuitive admin sidebar and breadcrumbs
+
+### 🚧 In Development
+- **Student Portal**: Frontend interface for students to view courses and submit assignments
+- **Instructor Portal**: Course management and grading interface for teachers
+- **File Upload System**: Assignment file submissions and course materials
+- **Grade Calculations**: Automated GPA tracking and grade analytics
+- **Email Notifications**: Alerts for assignments, grades, and deadlines
 
 ## Technology Stack
 
 - **Backend**: Django 5.2.2
 - **Database**: PostgreSQL (production), SQLite (development)
-- **Deployment**: Render
-- **Static Files**: WhiteNoise
-- **Server**: Gunicorn
+- **Deployment**: Render with automated GitHub integration
+- **Static Files**: WhiteNoise for production static file serving
+- **Server**: Gunicorn for production WSGI
+- **Styling**: Custom CSS with modern design patterns
 
 ## Database Schema
 
@@ -79,9 +88,15 @@ Enrollment ←→ Student    Student
    ```bash
    python manage.py migrate
    python manage.py createsuperuser
+   python manage.py setup_production  # Creates sample data
    ```
 
-5. **Run development server**
+5. **Static files**
+   ```bash
+   python manage.py collectstatic --noinput
+   ```
+
+6. **Run development server**
    ```bash
    python manage.py runserver
    ```
@@ -110,15 +125,26 @@ The application is configured for deployment on Render:
 
 ### Admin Interface
 Access the Django admin at `/admin/` with superuser credentials:
-- **Administrators**: Full system access
-- **Instructors**: Course and assignment management 
-- **Students**: Limited to their own data
+
+**Dashboard Features:**
+- **Real-time Statistics**: Live user counts, course enrollment data, and submission metrics
+- **Quick Actions**: Direct links to create courses, users, and enrollments
+- **System Status**: Database connectivity and data health monitoring
+- **Beautiful Design**: Modern cards, responsive layout, and intuitive navigation
+
+**Administrative Capabilities:**
+- **User Management**: Create and manage student, instructor, and admin accounts
+- **Course Creation**: Set up courses with modules and assignments
+- **Enrollment Management**: Enroll students in courses and track progress
+- **Assignment Tools**: Create assignments with due dates and point values
+- **Grading System**: Review and grade student submissions
 
 ### Sample Data
 The production deployment includes sample data:
-- Test course: "MATH101 - Introduction to Mathematics"
-- Sample module: "Module 1: Addition"
-- Example assignment and submission workflow
+- **7 Test Users**: Covering all role types (students, instructors, administrators)
+- **Sample Course**: "MATH102 - Intermediate Mathematics"
+- **Course Content**: Module and assignment examples
+- **Complete Workflow**: Enrollment and submission examples
 
 ## Project Structure
 
@@ -127,41 +153,52 @@ lms-python/
 ├── lms_platform/           # Main Django project
 │   ├── core/              # Core application
 │   │   ├── models.py      # Database models
-│   │   ├── admin.py       # Admin customizations
-│   │   ├── management/    # Custom commands
+│   │   ├── admin.py       # Custom admin with real-time data
+│   │   ├── management/    # Custom management commands
 │   │   └── ...
-│   ├── settings.py        # Django configuration
-│   └── urls.py           # URL routing
-├── requirements.txt       # Python dependencies
-├── KATIE.md              # Development documentation
-└── README.md             # This file
+│   ├── templates/         # Template system
+│   │   ├── admin/         # Custom admin templates
+│   │   │   ├── base.html  # Master admin layout
+│   │   │   ├── index.html # Dashboard with real data
+│   │   │   ├── change_list.html # Styled list views
+│   │   │   └── change_form.html # Beautiful forms
+│   │   └── index.html     # Landing page
+│   ├── static/           # Static files
+│   │   ├── css/          # Organized stylesheets
+│   │   │   ├── modern-lms.css # Core design system
+│   │   │   └── admin-styles.css # Admin interface styles
+│   │   └── js/           # JavaScript functionality
+│   ├── settings.py       # Django configuration
+│   └── urls.py           # URL routing with custom admin
+├── requirements.txt      # Python dependencies
+├── KATIE.md             # Development documentation
+└── README.md            # This file
 ```
 
-## Development Process
-
-This project demonstrates:
-- **Database Design**: Complex relationships and data modeling
-- **Django Best Practices**: Models, admin, management commands
-- **Production Deployment**: Environment configuration, static files
-- **Code Quality**: Documentation, version control, testing
-- **Problem Solving**: Debugging deployment issues, browser caching
-
-## Portfolio Highlights
+## Development Highlights
 
 ### Technical Skills Demonstrated
-- Django framework proficiency
-- PostgreSQL database design
-- Production deployment and DevOps
-- Custom Django admin interfaces
-- Database relationship modeling
-- Environment-based configuration
+- **Django Framework**: Advanced models, custom admin, template inheritance
+- **Database Design**: Complex relationships, data integrity, role-based permissions
+- **Frontend Development**: Responsive design, modern CSS, user experience
+- **Production Deployment**: Environment configuration, static file management
+- **Code Organization**: Clean architecture, separation of concerns, documentation
 
 ### Professional Development Practices
-- Comprehensive documentation (KATIE.md)
-- Version control with meaningful commits
-- Production-ready configuration
-- Automated deployment pipeline
-- Code organization and structure
+- **Template Inheritance**: DRY principles with Django's template system
+- **CSS Architecture**: External stylesheets, design systems, maintainable code
+- **Database Management**: Custom management commands, automated data setup
+- **Version Control**: Meaningful commits, documented progress, collaborative workflow
+- **Problem Solving**: Systematic debugging, step-by-step development approach
+
+## Portfolio Value
+
+This project demonstrates:
+- **Full-Stack Capabilities**: Backend logic, database design, frontend styling
+- **Real-World Application**: Practical business logic for education technology
+- **Production Readiness**: Deployed application with professional deployment practices
+- **User Experience Focus**: Intuitive interfaces, responsive design, modern aesthetics
+- **Technical Depth**: Advanced Django features, custom admin interfaces, complex data relationships
 
 ## Contributing
 
@@ -175,4 +212,7 @@ This project is for educational and portfolio purposes.
 
 **Portfolio Project by Katie Harshman**  
 🔗 [Portfolio Website](https://katieharshman.com)  
-🔗 [Live Demo](https://lms-python-otqx.onrender.com)
+🔗 [Live Demo](https://lms-python-otqx.onrender.com)  
+🔗 [GitHub Repository](https://github.com/pie1011/lms-python)
+
+*Demonstrating modern Django development with professional design, real-world functionality, and production deployment practices.*
