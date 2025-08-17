@@ -36,109 +36,52 @@
     </div>
 {% endif %}
 
-{% if action_form and actions_on_top and cl.show_admin_actions %}
-    <form method="post" class="bulk-actions">
-        {% csrf_token %}
-        <label>Action:</label>
-        {{ action_form.action }}
-        <button type="submit" name="index" value="{{ action_index }}">Go</button>
-        <span class="action-counter" data-actions-icnt="{{ cl.result_count }}">0 of {{ cl.result_count }} selected</span>
-    </form>
-{% endif %}
+{% block search %}{% endblock %}
 
-{% if cl.filter_specs %}
-    <div class="filters">
-        <div class="filter-title">Filter by:</div>
-        <div class="filter-links">
-            {% for spec in cl.filter_specs %}
-                {% for choice in spec.choices %}
-                    <a href="{{ choice.query_string|iriencode }}" 
-                       class="{% if choice.selected %}selected{% endif %}">
-                        {{ choice.display }}
-                    </a>
-                {% endfor %}
-            {% endfor %}
-        </div>
-    </div>
-{% endif %}
+{% block date_hierarchy %}{% endblock %}
 
-{% if cl.result_count == 0 %}
-    <div class="empty-state">
-        <i class="fas fa-inbox"></i>
-        <h3>No {{ cl.opts.verbose_name_plural }} found</h3>
-        <p>{% if cl.query %}No results for "{{ cl.query }}"{% else %}No {{ cl.opts.verbose_name_plural }} have been created yet.{% endif %}</p>
-        {% if has_add_permission %}
-            <a href="{% url 'admin:'|add:cl.opts.app_label|add:'_'|add:cl.opts.model_name|add:'_add' %}" class="add-button" style="margin-top: 1rem; display: inline-flex;">
-                <i class="fas fa-plus"></i>
-                Add the first {{ cl.opts.verbose_name }}
-            </a>
-        {% endif %}
-    </div>
-{% else %}
-    {% block result_list %}
-        <table class="results-table">
-            <thead>
-                <tr>
-                    {% if action_form and cl.show_admin_actions %}
-                        <th>
-                            <input type="checkbox" id="action-toggle" class="action-checkbox">
-                        </th>
-                    {% endif %}
-                    {% for header in result_headers %}
-                        <th class="{{ header.class_attrib }}">
-                            {% if header.sortable %}
-                                <a href="{{ header.url_primary }}">{{ header.text|capfirst }}</a>
-                            {% else %}
-                                {{ header.text|capfirst }}
-                            {% endif %}
-                        </th>
+{% block filters %}
+    {% if cl.filter_specs %}
+        <div class="filters">
+            <div class="filter-title">Filter by:</div>
+            <div class="filter-links">
+                {% for spec in cl.filter_specs %}
+                    {% for choice in spec.choices %}
+                        <a href="{{ choice.query_string|iriencode }}" 
+                           class="{% if choice.selected %}selected{% endif %}">
+                            {{ choice.display }}
+                        </a>
                     {% endfor %}
-                </tr>
-            </thead>
-            <tbody>
-                {% for result in results %}
-                    <tr>
-                        {% if action_form and cl.show_admin_actions %}
-                            <td>
-                                <input type="checkbox" name="_selected_action" value="{{ result.pk }}" class="action-checkbox action-select">
-                            </td>
-                        {% endif %}
-                        {% for item in result %}
-                            <td>
-                                {% if forloop.first %}
-                                    <a href="{% url 'admin:'|add:cl.opts.app_label|add:'_'|add:cl.opts.model_name|add:'_change' result.pk %}" class="table-link">
-                                        {{ item }}
-                                    </a>
-                                {% else %}
-                                    {{ item }}
-                                {% endif %}
-                            </td>
-                        {% endfor %}
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
-        {% if cl.result_count > cl.list_per_page %}
-            <div class="pagination">
-                <span class="pagination-info">
-                    {{ cl.result_count }} total
-                </span>
-                
-                {% if cl.can_show_all %}
-                    <a href="?{% if cl.is_popup %}_popup=1&{% endif %}{{ cl.get_query_string|slice:"1:" }}">All</a>
-                {% endif %}
-                
-                {% for i in cl.page_range %}
-                    {% if cl.page_num == i %}
-                        <span class="this-page">{{ i }}</span>
-                    {% else %}
-                        <a href="?{% if cl.is_popup %}_popup=1&{% endif %}{{ cl.get_query_string }}&p={{ i }}">{{ i }}</a>
-                    {% endif %}
                 {% endfor %}
             </div>
-        {% endif %}
-    {% endblock %}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% if action_form and actions_on_top and cl.show_admin_actions %}
+    {% admin_actions %}
+{% endif %}
+
+{% block result_list %}
+    {% if cl.result_count == 0 %}
+        <div class="empty-state">
+            <i class="fas fa-inbox"></i>
+            <h3>No {{ cl.opts.verbose_name_plural }} found</h3>
+            <p>{% if cl.query %}No results for "{{ cl.query }}"{% else %}No {{ cl.opts.verbose_name_plural }} have been created yet.{% endif %}</p>
+            {% if has_add_permission %}
+                <a href="{% url 'admin:'|add:cl.opts.app_label|add:'_'|add:cl.opts.model_name|add:'_add' %}" class="add-button" style="margin-top: 1rem; display: inline-flex;">
+                    <i class="fas fa-plus"></i>
+                    Add the first {{ cl.opts.verbose_name }}
+                </a>
+            {% endif %}
+        </div>
+    {% else %}
+        {% result_list cl %}
+    {% endif %}
+{% endblock %}
+
+{% if action_form and actions_on_bottom and cl.show_admin_actions %}
+    {% admin_actions %}
 {% endif %}
 
 <script>
