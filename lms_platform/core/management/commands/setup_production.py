@@ -47,7 +47,7 @@ class Command(BaseCommand):
         
         superuser = User.objects.create_superuser(
             username=username,
-            email='superkatie@lms.com',
+            email='superkatie@demo.com',
             password=password,
             first_name='Super',
             last_name='Katie'
@@ -71,7 +71,7 @@ class Command(BaseCommand):
         users_data = [
             {
                 'username': 'student1',
-                'email': 'student1@lms.com',
+                'email': 'student1@demo.com',
                 'first_name': 'Alice',
                 'last_name': 'Student',
                 'role': 'student',
@@ -79,7 +79,7 @@ class Command(BaseCommand):
             },
             {
                 'username': 'instructor1',
-                'email': 'instructor1@lms.com',
+                'email': 'instructor1@demo.com',
                 'first_name': 'Bob',
                 'last_name': 'Professor',
                 'role': 'instructor',
@@ -87,7 +87,7 @@ class Command(BaseCommand):
             },
             {
                 'username': 'admin1',
-                'email': 'admin1@lms.com',
+                'email': 'admin1@demo.com',
                 'first_name': 'Carol',
                 'last_name': 'Administrator',
                 'role': 'admin',
