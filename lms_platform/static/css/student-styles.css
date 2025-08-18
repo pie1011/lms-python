@@ -230,7 +230,6 @@
 }
 
 .student-btn {
-    padding: 0.5rem 1rem;
     border: none;
     border-radius: 6px;
     font-size: 0.875rem;
@@ -240,12 +239,14 @@
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
+    padding: 1rem 1.5rem;
 }
 
 .student-btn-outline {
     background: transparent;
     color: var(--primary-blue);
     border: 1px solid var(--primary-blue);
+    padding: 1rem 1.5rem;
 }
 
 .student-btn-outline:hover {

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Login | LMS Platform</title>
+    <title>Employee Training Portal | LMS Platform</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/modern-lms.css' %}">
     <link rel="stylesheet" href="{% static 'css/student-styles.css' %}">
@@ -14,19 +14,19 @@
         <div class="login-card">
             <div class="login-header">
                 <a href="{% url 'index' %}" class="login-logo">
-                    <i class="fas fa-user-graduate"></i>
-                    Student Portal
+                    <i class="fas fa-user-tie"></i>
+                    Employee Training Portal
                 </a>
                 <h1 class="login-title">Welcome Back</h1>
-                <p class="login-subtitle">Sign in to access your courses and assignments</p>
+                <p class="login-subtitle">Access your professional development and training programs</p>
             </div>
 
             <!-- Demo Information -->
             <div class="demo-info">
                 <i class="fas fa-info-circle"></i>
-                <strong>Demo Student Account:</strong><br>
-                Username: <code>student1</code><br>
-                Password: <code>password123</code>
+                <strong>Demo Employee Account:</strong><br>
+                Username: <code>demo_employee</code><br>
+                Password: <code>training123</code>
             </div>
 
             {% if messages %}
@@ -49,13 +49,13 @@
                 
                 <div class="form-group">
                     <label for="username" class="form-label">
-                        <i class="fas fa-user"></i> Username
+                        <i class="fas fa-user"></i> Employee ID / Username
                     </label>
                     <input type="text" 
                            name="username" 
                            id="username"
                            class="form-input"
-                           placeholder="Enter your username"
+                           placeholder="Enter your employee username"
                            required>
                 </div>
 
@@ -73,7 +73,7 @@
                 
                 <button type="submit" class="login-button">
                     <i class="fas fa-sign-in-alt"></i>
-                    Sign In to Student Portal
+                    Access Training Portal
                 </button>
             </form>
 
@@ -85,7 +85,7 @@
                 <span style="margin: 0 1rem; color: var(--neutral-gray);">|</span>
                 <a href="{% url 'admin:login' %}">
                     <i class="fas fa-cog"></i>
-                    Admin Portal
+                    HR Admin Portal
                 </a>
             </div>
         </div>
