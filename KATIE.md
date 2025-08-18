@@ -380,7 +380,7 @@ python manage.py test
 
 ---
 
-Recent prompt:
+Previous prompt:
 
 I've noticed the user tab in admin shows this:
 "Password

@@ -304,64 +304,44 @@ from django.contrib.auth.admin import UserAdmin
 class DemoUserAdmin(DemoUserMixin, UserAdmin):
     """Custom User admin with hidden password details and demo protections"""
     
+    # Ensure password change functionality is preserved
+    change_password_form = UserAdmin.change_password_form
+    change_user_password_template = UserAdmin.change_user_password_template
+    
     def get_fieldsets(self, request, obj=None):
-        """Override fieldsets to hide password details"""
-        fieldsets = super().get_fieldsets(request, obj)
-        
-        # Create a new fieldsets tuple without the password field
-        new_fieldsets = []
-        for name, field_options in fieldsets:
-            if name == 'Personal info':
-                # Keep personal info but without password details
-                fields = list(field_options['fields'])
-                if 'password' in fields:
-                    fields.remove('password')
-                new_fieldsets.append((name, {'fields': tuple(fields)}))
-            elif name is None and 'password' in field_options.get('fields', []):
-                # This is the main fieldset with username and password
-                fields = list(field_options['fields'])
-                if 'password' in fields:
-                    fields.remove('password')
-                new_fieldsets.append((name, {'fields': tuple(fields)}))
-            else:
-                new_fieldsets.append((name, field_options))
-        
-        # Add a simple password section without details
-        new_fieldsets.insert(1, (
-            'Authentication', 
-            {
-                'fields': ('password_change_link',),
-                'description': 'Password management is handled securely.'
-            }
-        ))
-        
-        return new_fieldsets
+        """Override fieldsets to hide password details but keep functionality"""
+        if not obj:
+            # For add form, use default fieldsets but without password
+            fieldsets = super().get_fieldsets(request, obj)
+            new_fieldsets = []
+            for name, field_options in fieldsets:
+                if name is None and 'password' in field_options.get('fields', []):
+                    fields = list(field_options['fields'])
+                    if 'password' in fields:
+                        fields.remove('password')
+                    new_fieldsets.append((name, {'fields': tuple(fields)}))
+                else:
+                    new_fieldsets.append((name, field_options))
+            return new_fieldsets
+        else:
+            # For change form, use a custom simplified fieldset
+            return (
+                (None, {'fields': ('username',)}),
+                ('Personal info', {'fields': ('first_name', 'last_name', 'email')}),
+                ('Permissions', {
+                    'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions'),
+                }),
+                ('Important dates', {'fields': ('last_login', 'date_joined')}),
+            )
     
     def get_readonly_fields(self, request, obj=None):
-        """Add password change link as readonly field"""
+        """Get readonly fields for user admin"""
         readonly_fields = list(super().get_readonly_fields(request, obj))
-        readonly_fields.append('password_change_link')
+        if obj and obj.username == 'PortfolioDemo':
+            # For demo users, make more fields readonly
+            readonly_fields.extend(['username', 'is_staff', 'is_superuser'])
         return readonly_fields
     
-    def password_change_link(self, obj):
-        """Custom field to show password change options"""
-        if not obj or not obj.pk:
-            return "Save user first to enable password management"
-        
-        # Disable password reset for demo users
-        if obj.username == 'PortfolioDemo':
-            return format_html(
-                '<span style="color: #666;">Password changes disabled for demo account</span>'
-            )
-        
-        # For other users, provide a clean reset link
-        reset_url = reverse('admin:auth_user_password_change', args=[obj.pk])
-        return format_html(
-            '<a href="{}" class="button">Change Password</a>',
-            reset_url
-        )
-    
-    password_change_link.short_description = 'Password Management'
     
     def user_change_password(self, request, id, form_url=''):
         """Override password change view to block demo users"""
@@ -375,5 +355,27 @@ class DemoUserAdmin(DemoUserMixin, UserAdmin):
                 reverse('admin:auth_user_change', args=[id])
             )
         return super().user_change_password(request, id, form_url)
+    
+    def change_view(self, request, object_id, form_url='', extra_context=None):
+        """Override change view to ensure password change functionality"""
+        extra_context = extra_context or {}
+        
+        # Ensure the password change link appears for authorized users
+        if object_id:
+            try:
+                user = self.get_object(request, object_id)
+                if user:
+                    # Django checks for this specific context variable
+                    extra_context['has_change_password_permission'] = (
+                        user.username != 'PortfolioDemo' and
+                        request.user.has_perm('auth.change_user')
+                    )
+            except:
+                pass
+                
+        return super().change_view(request, object_id, form_url, extra_context)
 
+# Register with both admin sites to ensure password functionality works
+admin.site.unregister(User)  # Unregister the default User admin first
+admin.site.register(User, DemoUserAdmin)
 admin_site.register(User, DemoUserAdmin)
