@@ -170,39 +170,53 @@ class DemoUserMixin:
         # For GET requests or normal users, show the form normally
         return super().changeform_view(request, object_id, form_url, extra_context)
     
-def delete_view(self, request, object_id, extra_context=None):
-    """Override delete view for demo users"""
+# Mixin to handle demo user delete actions
+class DemoUserMixin:
+    """
+    Mixin to allow demo users full visual access but prevent actual changes
+    """
     
-    if request.user.username == 'PortfolioDemo':
-        # For demo user, immediately show success message and redirect
-        # Don't even show the confirmation page
-        messages.success(
-            request,
-            f'🎭 Demo Mode: {self.model._meta.verbose_name} would have been deleted successfully! '
-            f'The delete process works perfectly, but no actual data was removed for this demonstration.'
-        )
+    def has_add_permission(self, request):
+        return True
+    
+    def has_change_permission(self, request, obj=None):
+        return True
+    
+    def has_delete_permission(self, request, obj=None):
+        return True
+    
+    def get_queryset(self, request):
+        """Ensure we can override delete actions"""
+        return super().get_queryset(request)
+    
+    def delete_view(self, request, object_id, extra_context=None):
+        """Override delete view for demo users - both GET and POST"""
         
-        # Redirect back to the changelist
-        return HttpResponseRedirect(
-            reverse(f'admin:{self.model._meta.app_label}_{self.model._meta.model_name}_changelist')
-        )
-    
-    # For real users, show delete confirmation normally
-    return super().delete_view(request, object_id, extra_context)
-    
-    def save_model(self, request, obj, form, change):
-        """This shouldn't be called for demo users, but just in case"""
         if request.user.username == 'PortfolioDemo':
-            return  # Don't save
-        super().save_model(request, obj, form, change)
+            # For demo user, show message and redirect (both GET and POST)
+            messages.success(
+                request,
+                f'🎭 Demo Mode: {self.model._meta.verbose_name} would have been deleted successfully! '
+                f'The delete process works perfectly, but no actual data was removed for this demonstration.'
+            )
+            
+            return HttpResponseRedirect(
+                reverse(f'admin:{self.model._meta.app_label}_{self.model._meta.model_name}_changelist')
+            )
+        
+        return super().delete_view(request, object_id, extra_context)
     
     def delete_model(self, request, obj):
-        """This shouldn't be called for demo users, but just in case"""
+        """Prevent actual deletion for demo users"""
         if request.user.username == 'PortfolioDemo':
-            return  # Don't delete
+            return  # Don't delete anything
         super().delete_model(request, obj)
-
-
+    
+    def delete_queryset(self, request, queryset):
+        """Prevent bulk deletion for demo users"""
+        if request.user.username == 'PortfolioDemo':
+            return  # Don't delete anything
+        super().delete_queryset(request, queryset)
 
 # Update existing admin classes to use the mixin
 
