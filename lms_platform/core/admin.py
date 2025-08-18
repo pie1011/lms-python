@@ -303,25 +303,36 @@ from django.contrib.auth.admin import UserAdmin
 class DemoUserAdmin(DemoUserMixin, UserAdmin):
     """Custom User admin with hidden password details and demo protections"""
     
+    # Explicitly set all necessary attributes
+    list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff')
+    list_filter = ('is_staff', 'is_superuser', 'is_active', 'groups')
+    search_fields = ('username', 'first_name', 'last_name', 'email')
+    ordering = ('username',)
+    
     def get_fieldsets(self, request, obj=None):
         """Override fieldsets to hide password details but keep functionality"""
-        if not obj:
-            # For add form, use default fieldsets
-            return super().get_fieldsets(request, obj)
-        else:
-            # For change form, use a custom simplified fieldset that hides password
-            return (
-                (None, {'fields': ('username',)}),
-                ('Personal info', {'fields': ('first_name', 'last_name', 'email')}),
-                ('Permissions', {
-                    'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions'),
-                }),
-                ('Important dates', {'fields': ('last_login', 'date_joined')}),
-            )
+        # Get Django's default fieldsets
+        default_fieldsets = super().get_fieldsets(request, obj)
+        
+        # Filter out password field from the default fieldsets
+        filtered_fieldsets = []
+        for name, field_options in default_fieldsets:
+            fields = field_options.get('fields', ())
+            
+            # Remove password field if present
+            if 'password' in fields:
+                new_fields = tuple(field for field in fields if field != 'password')
+                if new_fields:  # Only add if there are remaining fields
+                    filtered_fieldsets.append((name, {**field_options, 'fields': new_fields}))
+            else:
+                filtered_fieldsets.append((name, field_options))
+        
+        return tuple(filtered_fieldsets)
     
     def get_readonly_fields(self, request, obj=None):
         """Get readonly fields for user admin"""
-        readonly_fields = ['last_login', 'date_joined']  # Always readonly
+        # Get the default readonly fields from parent class
+        readonly_fields = list(super().get_readonly_fields(request, obj))
         
         if obj and obj.username == 'PortfolioDemo':
             # For demo users, make more fields readonly
