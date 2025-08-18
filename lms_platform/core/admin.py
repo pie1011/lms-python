@@ -229,8 +229,8 @@ class DemoUserMixin:
             reverse(f'admin:{self.model._meta.app_label}_{self.model._meta.model_name}_changelist')
         )
 
-# Update existing admin classes to use the mixin
 
+# Update existing admin classes to use the mixin
 class CourseAdmin(DemoUserMixin, admin.ModelAdmin):
     """ Custom admin for Course model to filter instructors """
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
@@ -300,31 +300,16 @@ admin_site.register(Submission, SubmissionAdmin)
 
 # Register Django's built-in User model with demo restrictions
 from django.contrib.auth.admin import UserAdmin
-
 class DemoUserAdmin(DemoUserMixin, UserAdmin):
     """Custom User admin with hidden password details and demo protections"""
-    
-    # Ensure password change functionality is preserved
-    change_password_form = UserAdmin.change_password_form
-    change_user_password_template = UserAdmin.change_user_password_template
     
     def get_fieldsets(self, request, obj=None):
         """Override fieldsets to hide password details but keep functionality"""
         if not obj:
-            # For add form, use default fieldsets but without password
-            fieldsets = super().get_fieldsets(request, obj)
-            new_fieldsets = []
-            for name, field_options in fieldsets:
-                if name is None and 'password' in field_options.get('fields', []):
-                    fields = list(field_options['fields'])
-                    if 'password' in fields:
-                        fields.remove('password')
-                    new_fieldsets.append((name, {'fields': tuple(fields)}))
-                else:
-                    new_fieldsets.append((name, field_options))
-            return new_fieldsets
+            # For add form, use default fieldsets
+            return super().get_fieldsets(request, obj)
         else:
-            # For change form, use a custom simplified fieldset
+            # For change form, use a custom simplified fieldset that hides password
             return (
                 (None, {'fields': ('username',)}),
                 ('Personal info', {'fields': ('first_name', 'last_name', 'email')}),
@@ -336,24 +321,28 @@ class DemoUserAdmin(DemoUserMixin, UserAdmin):
     
     def get_readonly_fields(self, request, obj=None):
         """Get readonly fields for user admin"""
-        readonly_fields = list(super().get_readonly_fields(request, obj))
+        readonly_fields = ['last_login', 'date_joined']  # Always readonly
+        
         if obj and obj.username == 'PortfolioDemo':
             # For demo users, make more fields readonly
             readonly_fields.extend(['username', 'is_staff', 'is_superuser'])
+        
         return readonly_fields
-    
     
     def user_change_password(self, request, id, form_url=''):
         """Override password change view to block demo users"""
-        user = self.get_object(request, id)
-        if user and user.username == 'PortfolioDemo':
-            messages.error(
-                request, 
-                'Password changes are disabled for the demo account.'
-            )
-            return HttpResponseRedirect(
-                reverse('admin:auth_user_change', args=[id])
-            )
+        try:
+            user = self.get_object(request, id)
+            if user and user.username == 'PortfolioDemo':
+                messages.error(
+                    request, 
+                    'Password changes are disabled for the demo account.'
+                )
+                return HttpResponseRedirect(
+                    reverse('admin:auth_user_change', args=[id])
+                )
+        except:
+            pass
         return super().user_change_password(request, id, form_url)
     
     def change_view(self, request, object_id, form_url='', extra_context=None):
@@ -368,10 +357,11 @@ class DemoUserAdmin(DemoUserMixin, UserAdmin):
                     # Django checks for this specific context variable
                     extra_context['has_change_password_permission'] = (
                         user.username != 'PortfolioDemo' and
-                        request.user.has_perm('auth.change_user')
+                        request.user.has_perm('auth.change_user') and
+                        request.user.is_superuser
                     )
             except:
-                pass
+                extra_context['has_change_password_permission'] = False
                 
         return super().change_view(request, object_id, form_url, extra_context)
 

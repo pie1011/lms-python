@@ -49,21 +49,21 @@
                                 {% for field in line %}
                                     <div class="form-field {% if field.field.required %}required{% endif %}">
                                         <label for="{{ field.field.html_name }}" class="form-label">
-                                            {{ field.field.label }}
+                                            {{ field.label_tag|safe }}
                                             {% if field.field.required %}<span class="required-indicator">*</span>{% endif %}
                                         </label>
                                         
                                         <div class="form-input-wrapper">
-                                            {{ field.field }}
-                                            {% if field.field.help_text %}
-                                                <div class="form-help-text">{{ field.field.help_text }}</div>
+                                            {{ field.field|safe }}
+                                            {% if field.help_text %}
+                                                <div class="form-help-text">{{ field.help_text|safe }}</div>
                                             {% endif %}
                                         </div>
                                         
                                         {% if field.errors %}
                                             <div class="form-errors">
                                                 {% for error in field.errors %}
-                                                    <div class="form-error">{{ error }}</div>
+                                                    <div class="form-error">{{ error|safe }}</div>
                                                 {% endfor %}
                                             </div>
                                         {% endif %}
@@ -118,4 +118,18 @@
         </div>
     </div>
 </form>
+
+<!-- Show password change link for non-demo users -->
+{% if not add and original and opts.model_name == 'user' and has_change_password_permission %}
+    <div class="form-container" style="margin-top: 2rem;">
+        <div class="form-section">
+            <h2 class="form-section-title">Password</h2>
+            <p style="margin-bottom: 1rem;">
+                Raw passwords are not stored, so there is no way to see this user's password, 
+                but you can change the password using 
+                <a href="{% url 'admin:auth_user_password_change' original.pk %}" class="table-link">this form</a>.
+            </p>
+        </div>
+    </div>
+{% endif %}
 {% endblock %}
