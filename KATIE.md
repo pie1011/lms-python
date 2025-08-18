@@ -386,7 +386,7 @@ We're still having issues with what is and is not shown in the admin portal. I t
 1. User tab for PortfolioDemo shows dictionary for username: "Username:
 {'name': 'username', 'label': 'username', 'help_text': 'Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.', 'field': 'username', 'is_hidden': False}"
 
-2. User tab for PortfolioDemo shows dictionaries under Permissions: "Permissions
+2. User tab for PortfolioDemo shows dictionaries instead of actual elements under Permissions: "Permissions
 Active
 
 Staff status:
@@ -394,6 +394,45 @@ Staff status:
 Superuser status:
 {'name': 'is_superuser', 'label': 'superuser status', 'help_text': 'Designates that this user has all permissions without explicitly assigning them.', 'field': 'is_superuser', 'is_hidden': False}"
 
-3. The "Change Password" feature is not visible for the non-demo users. Superusers (i.e. SuperKatie) should be able to change any user's password. 
+3. The "Change Password" feature is still not visible for the non-demo users. Superusers (i.e. SuperKatie) should be able to change any user's password. The demo user ("PortfolioDemo") should not be able to change ANY passwords.
 
 I've even tried viewing in entirely different browsers to prevent cache issues from messing up the display.
+
+Claude Code response after attempting fix of above issue:
+Summary of Fixes
+
+  I've identified and fixed the three main issues:
+
+  1. Dictionary Display Issue ✅
+
+  Problem: Template was rendering {{ field.field|safe }} which displayed
+  dictionary representations instead of form widgets.
+
+  Fix: Changed
+  /workspaces/lms-python/lms_platform/templates/admin/change_form.html:
+  - {{ field.field|safe }} → {{ field }}
+  - {{ field.label_tag|safe }} → {{ field.label_tag }}
+
+  2. Password Change Visibility ✅
+
+  Problem: Password change link wasn't appearing for superusers on non-demo
+  users.
+
+  Fix: Enhanced DemoUserAdmin.change_view() in admin.py:359-381 to properly
+  set the has_change_password_permission context variable based on user type
+  and permissions.
+
+  3. Demo User Restrictions ✅
+
+  Confirmed: Demo user (PortfolioDemo) properly blocked from password changes
+   while superusers (SuperKatie) can change other users' passwords.
+
+  The Django application passes all system checks and the fixes should
+  resolve:
+  - Form fields displaying as proper widgets instead of dictionaries
+  - Password change links appearing for authorized users
+  - Demo user maintaining view-only access as intended
+
+  The template now correctly renders form fields using Django's standard
+  admin form rendering, and the permission system properly differentiates
+  between demo users and superusers.

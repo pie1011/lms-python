@@ -12,8 +12,6 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from django.utils.html import format_html
-from django.utils.safestring import mark_safe
 
 
 class LMSAdminSite(admin.AdminSite):
@@ -366,13 +364,17 @@ class DemoUserAdmin(DemoUserMixin, UserAdmin):
                 user = self.get_object(request, object_id)
                 if user:
                     # Django checks for this specific context variable
+                    # Show password change for superusers, but not for demo users
                     extra_context['has_change_password_permission'] = (
                         user.username != 'PortfolioDemo' and
-                        request.user.has_perm('auth.change_user') and
-                        request.user.is_superuser
+                        request.user.is_superuser and
+                        self.has_change_permission(request, user)
                     )
+                    # Also set show_password_fields to True for non-demo users
+                    extra_context['show_password_fields'] = user.username != 'PortfolioDemo'
             except:
                 extra_context['has_change_password_permission'] = False
+                extra_context['show_password_fields'] = False
                 
         return super().change_view(request, object_id, form_url, extra_context)
 
