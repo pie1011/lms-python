@@ -377,3 +377,16 @@ python manage.py test
 ---
 
 *This project demonstrates modern Django development practices including custom admin interfaces, real-time data integration, beautiful user interfaces, production-ready deployment, and innovative portfolio presentation features. The development approach emphasizes step-by-step learning, collaborative problem-solving, professional code quality, and thoughtful client/employer experience.*
+
+---
+
+Recent prompt:
+
+I've noticed the user tab in admin shows this:
+"Password
+algorithm: pbkdf2_sha256 iterations: 1000000 salt: ZF8itL**************** hash: vqCcPQ**************************************
+Reset password
+Raw passwords are not stored, so there is no way to see the user’s password."
+
+Is this normal? I'm not a fan of users seeing this stuff. Please make this not visible. Also, when logged in as the demo profile "PortfolioDemo" I don't want password reset possible.
+

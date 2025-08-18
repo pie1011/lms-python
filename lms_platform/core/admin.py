@@ -12,6 +12,8 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 
 
 class LMSAdminSite(admin.AdminSite):
@@ -138,45 +140,6 @@ class DemoUserMixin:
     """
     
     def has_add_permission(self, request):
-        # Always return True so Add buttons show up
-        return True
-    
-    def has_change_permission(self, request, obj=None):
-        # Always return True so Edit links show up
-        return True
-    
-    def has_delete_permission(self, request, obj=None):
-        # Always return True so Delete buttons show up
-        return True
-    
-    def changeform_view(self, request, object_id=None, form_url='', extra_context=None):
-        """Override form view to handle demo user submissions"""
-        
-        if request.user.username == 'PortfolioDemo' and request.method == 'POST':
-            # Demo user submitted a form - show success message and redirect
-            action = "updated" if object_id else "created"
-            
-            messages.success(
-                request,
-                f'🎭 Demo Mode: {self.model._meta.verbose_name} would have been {action} successfully! '
-                f'The form validation and interface work perfectly, but no actual data was modified for this demonstration.'
-            )
-            
-            # Redirect to changelist
-            return HttpResponseRedirect(
-                reverse(f'admin:{self.model._meta.app_label}_{self.model._meta.model_name}_changelist')
-            )
-        
-        # For GET requests or normal users, show the form normally
-        return super().changeform_view(request, object_id, form_url, extra_context)
-    
-# Mixin to handle demo user delete actions
-class DemoUserMixin:
-    """
-    Mixin to allow demo users full visual access but prevent actual changes
-    """
-    
-    def has_add_permission(self, request):
         return True
     
     def has_change_permission(self, request, obj=None):
@@ -185,38 +148,86 @@ class DemoUserMixin:
     def has_delete_permission(self, request, obj=None):
         return True
     
-    def get_queryset(self, request):
-        """Ensure we can override delete actions"""
-        return super().get_queryset(request)
-    
-    def delete_view(self, request, object_id, extra_context=None):
-        """Override delete view for demo users - both GET and POST"""
-        
+    def save_model(self, request, obj, form, change):
+        """Prevent demo users from saving any data"""
         if request.user.username == 'PortfolioDemo':
-            # For demo user, show message and redirect (both GET and POST)
-            messages.success(
-                request,
-                f'🎭 Demo Mode: {self.model._meta.verbose_name} would have been deleted successfully! '
-                f'The delete process works perfectly, but no actual data was removed for this demonstration.'
-            )
-            
-            return HttpResponseRedirect(
-                reverse(f'admin:{self.model._meta.app_label}_{self.model._meta.model_name}_changelist')
-            )
-        
-        return super().delete_view(request, object_id, extra_context)
+            return  # Don't save anything for demo users
+        super().save_model(request, obj, form, change)
     
     def delete_model(self, request, obj):
-        """Prevent actual deletion for demo users"""
+        """Prevent demo users from deleting data"""
         if request.user.username == 'PortfolioDemo':
-            return  # Don't delete anything
+            return  # Don't delete anything for demo users
         super().delete_model(request, obj)
     
     def delete_queryset(self, request, queryset):
-        """Prevent bulk deletion for demo users"""
+        """Prevent demo users from bulk deleting data"""
         if request.user.username == 'PortfolioDemo':
-            return  # Don't delete anything
+            return  # Don't delete anything for demo users
         super().delete_queryset(request, queryset)
+    
+    def response_add(self, request, obj, post_url_continue=None):
+        """Handle demo user add responses"""
+        if request.user.username == 'PortfolioDemo':
+            messages.success(
+                request,
+                f'Demo Mode: {self.model._meta.verbose_name} would have been created successfully! '
+                f'The form validation and interface work perfectly, but no actual data was modified for this demonstration.'
+            )
+            return HttpResponseRedirect(
+                reverse(f'admin:{self.model._meta.app_label}_{self.model._meta.model_name}_changelist')
+            )
+        return super().response_add(request, obj, post_url_continue)
+    
+    def response_change(self, request, obj):
+        """Handle demo user change responses"""
+        if request.user.username == 'PortfolioDemo':
+            messages.success(
+                request,
+                f'Demo Mode: {self.model._meta.verbose_name} would have been updated successfully! '
+                f'The form validation and interface work perfectly, but no actual data was modified for this demonstration.'
+            )
+            return HttpResponseRedirect(
+                reverse(f'admin:{self.model._meta.app_label}_{self.model._meta.model_name}_changelist')
+            )
+        return super().response_change(request, obj)
+    
+    def delete_view(self, request, object_id, extra_context=None):
+        """Override delete view for demo users"""
+        if request.user.username == 'PortfolioDemo':
+            messages.success(
+                request,
+                f'Demo Mode: {self.model._meta.verbose_name} would have been deleted successfully! '
+                f'The delete process works perfectly, but no actual data was removed for this demonstration.'
+            )
+            return HttpResponseRedirect(
+                reverse(f'admin:{self.model._meta.app_label}_{self.model._meta.model_name}_changelist')
+            )
+        return super().delete_view(request, object_id, extra_context)
+    
+    def get_actions(self, request):
+        """Override bulk actions for demo users"""
+        actions = super().get_actions(request)
+        if request.user.username == 'PortfolioDemo':
+            # Remove the delete action for demo users but keep others for demonstration
+            if 'delete_selected' in actions:
+                actions['delete_selected'] = (
+                    self._demo_delete_selected,
+                    'delete_selected',
+                    'Delete selected %(verbose_name_plural)s'
+                )
+        return actions
+    
+    def _demo_delete_selected(self, request, queryset):
+        """Demo-safe bulk delete action"""
+        messages.success(
+            request,
+            f'Demo Mode: {queryset.count()} {self.model._meta.verbose_name_plural} would have been deleted successfully! '
+            f'The bulk delete process works perfectly, but no actual data was removed for this demonstration.'
+        )
+        return HttpResponseRedirect(
+            reverse(f'admin:{self.model._meta.app_label}_{self.model._meta.model_name}_changelist')
+        )
 
 # Update existing admin classes to use the mixin
 
@@ -291,6 +302,78 @@ admin_site.register(Submission, SubmissionAdmin)
 from django.contrib.auth.admin import UserAdmin
 
 class DemoUserAdmin(DemoUserMixin, UserAdmin):
-    pass
+    """Custom User admin with hidden password details and demo protections"""
+    
+    def get_fieldsets(self, request, obj=None):
+        """Override fieldsets to hide password details"""
+        fieldsets = super().get_fieldsets(request, obj)
+        
+        # Create a new fieldsets tuple without the password field
+        new_fieldsets = []
+        for name, field_options in fieldsets:
+            if name == 'Personal info':
+                # Keep personal info but without password details
+                fields = list(field_options['fields'])
+                if 'password' in fields:
+                    fields.remove('password')
+                new_fieldsets.append((name, {'fields': tuple(fields)}))
+            elif name is None and 'password' in field_options.get('fields', []):
+                # This is the main fieldset with username and password
+                fields = list(field_options['fields'])
+                if 'password' in fields:
+                    fields.remove('password')
+                new_fieldsets.append((name, {'fields': tuple(fields)}))
+            else:
+                new_fieldsets.append((name, field_options))
+        
+        # Add a simple password section without details
+        new_fieldsets.insert(1, (
+            'Authentication', 
+            {
+                'fields': ('password_change_link',),
+                'description': 'Password management is handled securely.'
+            }
+        ))
+        
+        return new_fieldsets
+    
+    def get_readonly_fields(self, request, obj=None):
+        """Add password change link as readonly field"""
+        readonly_fields = list(super().get_readonly_fields(request, obj))
+        readonly_fields.append('password_change_link')
+        return readonly_fields
+    
+    def password_change_link(self, obj):
+        """Custom field to show password change options"""
+        if not obj or not obj.pk:
+            return "Save user first to enable password management"
+        
+        # Disable password reset for demo users
+        if obj.username == 'PortfolioDemo':
+            return format_html(
+                '<span style="color: #666;">Password changes disabled for demo account</span>'
+            )
+        
+        # For other users, provide a clean reset link
+        reset_url = reverse('admin:auth_user_password_change', args=[obj.pk])
+        return format_html(
+            '<a href="{}" class="button">Change Password</a>',
+            reset_url
+        )
+    
+    password_change_link.short_description = 'Password Management'
+    
+    def user_change_password(self, request, id, form_url=''):
+        """Override password change view to block demo users"""
+        user = self.get_object(request, id)
+        if user and user.username == 'PortfolioDemo':
+            messages.error(
+                request, 
+                'Password changes are disabled for the demo account.'
+            )
+            return HttpResponseRedirect(
+                reverse('admin:auth_user_change', args=[id])
+            )
+        return super().user_change_password(request, id, form_url)
 
 admin_site.register(User, DemoUserAdmin)
