@@ -170,24 +170,25 @@ class DemoUserMixin:
         # For GET requests or normal users, show the form normally
         return super().changeform_view(request, object_id, form_url, extra_context)
     
-    def delete_view(self, request, object_id, extra_context=None):
-        """Override delete view for demo users"""
+def delete_view(self, request, object_id, extra_context=None):
+    """Override delete view for demo users"""
+    
+    if request.user.username == 'PortfolioDemo':
+        # For demo user, immediately show success message and redirect
+        # Don't even show the confirmation page
+        messages.success(
+            request,
+            f'🎭 Demo Mode: {self.model._meta.verbose_name} would have been deleted successfully! '
+            f'The delete process works perfectly, but no actual data was removed for this demonstration.'
+        )
         
-        if request.user.username == 'PortfolioDemo' and request.method == 'POST':
-            # Demo user confirmed delete - show message and redirect
-            messages.success(
-                request,
-                f'🎭 Demo Mode: {self.model._meta.verbose_name} would have been deleted successfully! '
-                f'The delete confirmation process works perfectly, but no actual data was removed for this demonstration.'
-            )
-            
-            # Redirect to changelist
-            return HttpResponseRedirect(
-                reverse(f'admin:{self.model._meta.app_label}_{self.model._meta.model_name}_changelist')
-            )
-        
-        # For GET requests or normal users, show delete confirmation normally
-        return super().delete_view(request, object_id, extra_context)
+        # Redirect back to the changelist
+        return HttpResponseRedirect(
+            reverse(f'admin:{self.model._meta.app_label}_{self.model._meta.model_name}_changelist')
+        )
+    
+    # For real users, show delete confirmation normally
+    return super().delete_view(request, object_id, extra_context)
     
     def save_model(self, request, obj, form, change):
         """This shouldn't be called for demo users, but just in case"""
