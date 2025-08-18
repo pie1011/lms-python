@@ -380,13 +380,20 @@ python manage.py test
 
 ---
 
-Previous prompt:
+Recent prompt:
+We're still having issues with what is and is not shown in the admin portal. I tried having Claude Desktop help, as well. Please review the KATIE.md, admin.py, change_form.html, and any other files you think necessary to solve this.
 
-I've noticed the user tab in admin shows this:
-"Password
-algorithm: pbkdf2_sha256 iterations: 1000000 salt: ZF8itL**************** hash: vqCcPQ**************************************
-Reset password
-Raw passwords are not stored, so there is no way to see the user’s password."
+1. User tab for PortfolioDemo shows dictionary for username: "Username:
+{'name': 'username', 'label': 'username', 'help_text': 'Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.', 'field': 'username', 'is_hidden': False}"
 
-Is this normal? I'm not a fan of users seeing this stuff. Please make this not visible. Also, when logged in as the demo profile "PortfolioDemo" I don't want password reset possible.
+2. User tab for PortfolioDemo shows dictionaries under Permissions: "Permissions
+Active
 
+Staff status:
+{'name': 'is_staff', 'label': 'staff status', 'help_text': 'Designates whether the user can log into this admin site.', 'field': 'is_staff', 'is_hidden': False}
+Superuser status:
+{'name': 'is_superuser', 'label': 'superuser status', 'help_text': 'Designates that this user has all permissions without explicitly assigning them.', 'field': 'is_superuser', 'is_hidden': False}"
+
+3. The "Change Password" feature is not visible for the non-demo users. Superusers (i.e. SuperKatie) should be able to change any user's password. 
+
+I've even tried viewing in entirely different browsers to prevent cache issues from messing up the display.
