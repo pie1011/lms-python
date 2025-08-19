@@ -8,134 +8,7 @@
     <title>LMS Platform - Modern Learning Management System</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/modern-lms.css' %}">
-    <style>
-        /* Enhanced navigation for multiple portals */
-        .nav-cta {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-            position: relative;
-        }
-
-        .portal-dropdown {
-            position: relative;
-            display: inline-block;
-        }
-
-        .dropdown-button {
-            padding: 0.75rem 1.5rem;
-            border: 2px solid var(--primary-blue);
-            border-radius: 8px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: transparent;
-            color: var(--primary-blue);
-        }
-
-        .dropdown-button:hover {
-            background: var(--primary-blue);
-            color: var(--white);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background: var(--white);
-            min-width: 200px;
-            box-shadow: var(--shadow-xl);
-            border-radius: 8px;
-            border: 1px solid rgba(37, 99, 235, 0.1);
-            z-index: 1000;
-            margin-top: 0.5rem;
-        }
-
-        .portal-dropdown:hover .dropdown-content {
-            display: block;
-            animation: dropdownFadeIn 0.3s ease;
-        }
-
-        @keyframes dropdownFadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .dropdown-item {
-            display: block;
-            padding: 1rem 1.5rem;
-            color: var(--neutral-dark);
-            text-decoration: none;
-            transition: all 0.3s ease;
-            border-bottom: 1px solid rgba(37, 99, 235, 0.1);
-        }
-
-        .dropdown-item:last-child {
-            border-bottom: none;
-        }
-
-        .dropdown-item:hover {
-            background: rgba(37, 99, 235, 0.05);
-            color: var(--primary-blue);
-        }
-
-        .dropdown-item i {
-            width: 16px;
-            margin-right: 0.75rem;
-            color: var(--primary-blue);
-        }
-
-        .dropdown-item .item-description {
-            font-size: 0.8rem;
-            color: var(--neutral-gray);
-            margin-top: 0.25rem;
-        }
-
-        .demo-badge {
-            background: var(--accent-green);
-            color: white;
-            font-size: 0.7rem;
-            padding: 0.2rem 0.5rem;
-            border-radius: 4px;
-            margin-left: 0.5rem;
-        }
-
-        /* Mobile responsive dropdown */
-        @media (max-width: 768px) {
-            .nav-cta {
-                flex-direction: column;
-                gap: 0.5rem;
-            }
-
-            .dropdown-content {
-                position: relative;
-                display: block;
-                box-shadow: none;
-                border: none;
-                margin-top: 0;
-                background: transparent;
-            }
-
-            .portal-dropdown:hover .dropdown-content {
-                display: block;
-            }
-
-            .dropdown-item {
-                padding: 0.75rem 1rem;
-                border: 1px solid rgba(37, 99, 235, 0.2);
-                border-radius: 6px;
-                margin-bottom: 0.5rem;
-                background: var(--white);
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/dropdown-navigation.css' %}">
 </head>
 <body>
     <!-- Header -->
@@ -158,8 +31,8 @@
                 </a>
                 
                 <!-- Staff Portal Dropdown -->
-                <div class="portal-dropdown">
-                    <div class="dropdown-button">
+                <div class="portal-dropdown" id="staffPortalDropdown">
+                    <div class="dropdown-button" onclick="toggleDropdown()">
                         <i class="fas fa-users-cog"></i>
                         Staff Portal
                         <i class="fas fa-chevron-down"></i>
@@ -344,6 +217,8 @@
         </div>
     </footer>
 
+    <!-- Load JavaScript Files -->
     <script src="{% static 'js/modern-lms.js' %}"></script>
+    <script src="{% static 'js/dropdown-navigation.js' %}"></script>
 </body>
 </html>
